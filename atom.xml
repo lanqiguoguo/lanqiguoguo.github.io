@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://blog.lwb.im</id>
+    <title>风雪夜归人</title>
+    <updated>2023-03-11T11:18:36.211Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://blog.lwb.im"/>
+    <link rel="self" href="https://blog.lwb.im/atom.xml"/>
+    <subtitle>江湖没什么好的，也就酒还行！</subtitle>
+    <logo>https://blog.lwb.im/images/avatar.png</logo>
+    <icon>https://blog.lwb.im/favicon.ico</icon>
+    <rights>All rights reserved 2023, 风雪夜归人</rights>
+    <entry>
+        <title type="html"><![CDATA[Docker系列之搭建 NginxProxyManager]]></title>
+        <id>https://blog.lwb.im/IXI-a-RSd/</id>
+        <link href="https://blog.lwb.im/IXI-a-RSd/">
+        </link>
+        <updated>2023-03-11T07:11:31.000Z</updated>
+        <summary type="html"><![CDATA[<p>本项目是基于 <a href="https://github.com/NginxProxyManager/nginx-proxy-manager">NginxProxyManager/nginx-proxy-manage</a> 翻译的中文版本，该项目属于一个预构建的docker映像，它可以让你轻松地部署到你的网站上运行，包括免费的SSL，而不需要知道太多关于 Nginx 或 Let's Encrypt 的信息。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>本项目是基于 <a href="https://github.com/NginxProxyManager/nginx-proxy-manager">NginxProxyManager/nginx-proxy-manage</a> 翻译的中文版本，该项目属于一个预构建的docker映像，它可以让你轻松地部署到你的网站上运行，包括免费的SSL，而不需要知道太多关于 Nginx 或 Let's Encrypt 的信息。</p>
+<!-- more -->
+<h1 id="1-环境部署">1. 环境部署</h1>
+<p>安装Docker和Docker-compose</p>
+<ul>
+<li><a href="https://blog.csdn.net/zhangzejin3883/article/details/124778945">Docker和Docker-compose安装文档（中文）</a></li>
+</ul>
+<h1 id="2-创建yaml文件">2. 创建YAML文件</h1>
+<p>创建一个 <code>docker-compose.yml</code> 文件:</p>
+<pre><code>version: '3'
+services:
+  app:
+    image: 'chishin/nginx-proxy-manager-zh:latest'
+    restart: always
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+</code></pre>
+<h1 id="3-部署运行">3. 部署运行</h1>
+<pre><code>docker-compose up -d
+</code></pre>
+<h1 id="4-登录管理页面">4. 登录管理页面</h1>
+<p>当你的docker容器成功运行，使用浏览器访问81端口。 有些时候需要稍等一段时间。<br>
+http://127.0.0.1:81</p>
+<p>默认管理员信息:</p>
+<pre><code>Email:    admin@example.com
+Password: changeme
+</code></pre>
+<p>注：使用这个默认用户登录后，系统会立即要求您修改详细信息和密码。</p>
+<h1 id="5-快速升级">5. 快速升级</h1>
+<pre><code>docker-compose down
+docker-compose pull
+docker-compose up -d
+</code></pre>
+<!-- more -->
+<p>参考：<a href="https://github.com/xiaoxinpro/nginx-proxy-manager-zh">xiaoxinpro/nginx-proxy-manager-zh</a></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Docker系列之搭建GoProxy代理]]></title>
+        <id>https://blog.lwb.im/goproxy/</id>
+        <link href="https://blog.lwb.im/goproxy/">
+        </link>
+        <updated>2023-03-09T11:16:28.000Z</updated>
+        <summary type="html"><![CDATA[<p>Docker <a href="https://hub.docker.com/r/stilleshan/goproxy">stilleshan/goproxy</a></p>
+<p>基于 <a href="https://github.com/snail007/goproxy">snail007/goproxy</a> 项目的 docker 镜像</p>
+<p>参考 <a href="https://www.ioiox.com/archives/131.html">轻量级高性能 HTTP/HTTPS SOCKS5 代理软件 goproxy docker 部署教程</a></p>
+]]></summary>
+        <content type="html"><![CDATA[<p>Docker <a href="https://hub.docker.com/r/stilleshan/goproxy">stilleshan/goproxy</a></p>
+<p>基于 <a href="https://github.com/snail007/goproxy">snail007/goproxy</a> 项目的 docker 镜像</p>
+<p>参考 <a href="https://www.ioiox.com/archives/131.html">轻量级高性能 HTTP/HTTPS SOCKS5 代理软件 goproxy docker 部署教程</a></p>
+<!-- more -->
+<h1 id="启动单个代理服务">启动单个代理服务</h1>
+<p>启动一个端口为<code>1111</code>的HTTP代理</p>
+<pre><code>docker run -d --name goproxy \
+    --restart always \
+    --network host \
+    stilleshan/goproxy \
+    /proxy http -p :11111
+</code></pre>
+<p>启动一个端口为<code>22222</code>的 socks5 代理</p>
+<pre><code>docker run -d --name goproxy \
+    --restart always \
+    --network host \
+    stilleshan/goproxy \
+    /proxy socks -p :22222
+</code></pre>
+<h1 id="同时启动代理服务">同时启动代理服务</h1>
+<pre><code>docker run -d --name goproxy \
+    --restart always \
+    --network host \
+    stilleshan/goproxy \
+    sh -c '/proxy http -p :11111 &amp; /proxy socks -p :22222'
+</code></pre>
+<h1 id="docker-compose-启动">docker compose 启动</h1>
+<pre><code>version: &quot;3&quot;
+services:
+  goproxy:
+    image: stilleshan/goproxy
+    container_name: goproxy
+    network_mode: host
+    restart: always
+    command: 
+      - sh
+      - -c
+      - |
+          /proxy http -p :11111 &amp;
+          /proxy socks -p :22222
+</code></pre>
+<pre><code>docker-compose up -d
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Hello Gridea]]></title>
+        <id>https://blog.lwb.im/hello-gridea/</id>
+        <link href="https://blog.lwb.im/hello-gridea/">
+        </link>
+        <updated>2018-12-11T16:00:00.000Z</updated>
+        <summary type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
+✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
+✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
+<!-- more -->
+<p><a href="https://github.com/getgridea/gridea">Github</a><br>
+<a href="https://gridea.dev/">Gridea 主页</a><br>
+<a href="https://fehey.com/">示例网站</a></p>
+<h2 id="特性">特性👇</h2>
+<p>📝  你可以使用最酷的 <strong>Markdown</strong> 语法，进行快速创作</p>
+<p>🌉  你可以给文章配上精美的封面图和在文章任意位置插入图片</p>
+<p>🏷️  你可以对文章进行标签分组</p>
+<p>📋  你可以自定义菜单，甚至可以创建外部链接菜单</p>
+<p>💻  你可以在 <strong>Windows</strong>，<strong>MacOS</strong> 或 <strong>Linux</strong> 设备上使用此客户端</p>
+<p>🌎  你可以使用 <strong>𝖦𝗂𝗍𝗁𝗎𝖻 𝖯𝖺𝗀𝖾𝗌</strong> 或 <strong>Coding Pages</strong> 向世界展示，未来将支持更多平台</p>
+<p>💬  你可以进行简单的配置，接入 <a href="https://github.com/gitalk/gitalk">Gitalk</a> 或 <a href="https://github.com/SukkaW/DisqusJS">DisqusJS</a> 评论系统</p>
+<p>🇬🇧  你可以使用<strong>中文简体</strong>或<strong>英语</strong></p>
+<p>🌁  你可以任意使用应用内默认主题或任意第三方主题，强大的主题自定义能力</p>
+<p>🖥  你可以自定义源文件夹，利用 OneDrive、百度网盘、iCloud、Dropbox 等进行多设备同步</p>
+<p>🌱 当然 <strong>Gridea</strong> 还很年轻，有很多不足，但请相信，它会不停向前 🏃</p>
+<p>未来，它一定会成为你离不开的伙伴</p>
+<p>尽情发挥你的才华吧！</p>
+<p>😘 Enjoy~</p>
+]]></content>
+    </entry>
+</feed>
